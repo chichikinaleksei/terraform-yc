@@ -1,0 +1,4 @@
+cloud_id       = " "
+folder_id      = " "
+s3_access_key  = " "
+s3_secret_key  = " "
