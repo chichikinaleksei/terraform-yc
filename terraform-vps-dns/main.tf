@@ -13,7 +13,6 @@ provider "yandex" {
   service_account_key_file = "${path.module}/generated-key.json"
 }
 
-
 # Создание VPC
 resource "yandex_vpc_network" "default" {
   name = var.network_name
@@ -39,3 +38,78 @@ resource "yandex_dns_zone" "private_zone" {
     yandex_vpc_network.default.id
   ]
 }
+
+# Security Group для bastion-хоста (SSH)
+resource "yandex_vpc_security_group" "bastion_sg" {
+  name       = "bastion-ssh-sg"
+  network_id = yandex_vpc_network.default.id
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Allow SSH"
+    port           = 22
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Allow all egress"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_compute_instance" "bastion" {
+  count       = var.create_bastion ? 1 : 0
+  name        = "bastion-host"
+  platform_id = "standard-v1"
+  zone        = "ru-central1-a"
+
+  resources {
+    cores         = 2
+    memory        = 2
+    core_fraction = 5
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd842fimj1jg6vmfee6r"  # Ubuntu 22.04 LTS
+    }
+  }
+
+  network_interface {
+    subnet_id      = yandex_vpc_subnet.subnets["subnet-a"].id
+    nat            = true
+    security_group_ids = [yandex_vpc_security_group.bastion_sg.id]
+  }
+
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
+  }
+}
+
+module "k8s_hosts" {
+  source     = "./modules/k8s-hosts"
+  subnet_id  = yandex_vpc_subnet.subnets["subnet-b"].id
+  network_id = yandex_vpc_network.default.id
+  ssh_key = file("~/.ssh/id_ed25519.pub")
+
+
+  vm_nodes = {
+    "k8s-master" = {
+      fqdn = "k8s-master.example.com"
+      role = "master"
+      zone = "ru-central1-b"
+    }
+    "k8s-worker" = {
+      fqdn = "k8s-worker.example.com"
+      role = "worker"
+      zone = "ru-central1-b"
+    }
+    "k8s-ingress" = {
+      fqdn = "k8s-ingress.example.com"
+      role = "ingress"
+      zone = "ru-central1-b"
+    }
+  }
+}
+

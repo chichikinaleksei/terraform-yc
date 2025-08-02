@@ -21,3 +21,4 @@ key.json
 .env
 .tfstate
 .bfg-report
+~/.ssh/id_ed25519.pub
