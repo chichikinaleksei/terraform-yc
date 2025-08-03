@@ -13,8 +13,8 @@ variable "network_name" {
 
 variable "subnets" {
   type = map(object({
-    zone           = string
-    cidr_block     = string
+    zone       = string
+    cidr_block = string
   }))
 }
 

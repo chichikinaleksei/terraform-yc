@@ -1,4 +1,3 @@
-# modules/k8s-hosts/main.tf
 terraform {
   required_providers {
     yandex = {
@@ -28,9 +27,9 @@ resource "yandex_compute_instance" "k8s_nodes" {
   }
 
   network_interface {
-    subnet_id           = var.subnet_id
-    nat                 = false
-    security_group_ids  = [yandex_vpc_security_group.k8s_sg.id]
+    subnet_id          = var.subnet_id
+    nat                = false
+    security_group_ids = [yandex_vpc_security_group.k8s_sg.id]
   }
 
   metadata = {
@@ -39,19 +38,22 @@ resource "yandex_compute_instance" "k8s_nodes" {
 }
 
 resource "yandex_vpc_security_group" "k8s_sg" {
-  name       = "k8s-nodes-sg"
+  name       = "k8s-sg"
   network_id = var.network_id
+}
 
-  ingress {
-    protocol       = "TCP"
-    description    = "Allow SSH from bastion"
-    port           = 22
-    v4_cidr_blocks = ["10.10.0.0/24"]  # подсеть bastion
-  }
+resource "yandex_vpc_security_group_rule" "k8s_ingress" {
+  security_group_binding = yandex_vpc_security_group.k8s_sg.id
+  direction              = "ingress"
+  protocol               = "ANY"
+  description            = "Allow all traffic from this SG"
+  security_group_id      = yandex_vpc_security_group.k8s_sg.id
+}
 
-  egress {
-    protocol       = "ANY"
-    description    = "Allow all egress"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "yandex_vpc_security_group_rule" "k8s_egress" {
+  security_group_binding = yandex_vpc_security_group.k8s_sg.id
+  direction              = "egress"
+  protocol               = "ANY"
+  description            = "Allow all egress"
+  v4_cidr_blocks         = ["0.0.0.0/0"]
 }

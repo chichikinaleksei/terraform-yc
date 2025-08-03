@@ -8,8 +8,8 @@ terraform {
 }
 
 provider "yandex" {
-  cloud_id               = var.cloud_id
-  folder_id              = var.folder_id
+  cloud_id                 = var.cloud_id
+  folder_id                = var.folder_id
   service_account_key_file = "${path.module}/generated-key.json"
 }
 
@@ -27,17 +27,6 @@ resource "yandex_vpc_subnet" "subnets" {
   v4_cidr_blocks = [each.value.cidr_block]
 }
 
-# Приватная DNS-зона
-resource "yandex_dns_zone" "private_zone" {
-  name        = "private-zone"
-  zone        = var.dns_zone_name
-  public      = false
-  folder_id   = var.folder_id
-  description = "Private zone for internal resolution"
-  private_networks = [
-    yandex_vpc_network.default.id
-  ]
-}
 
 # Security Group для bastion-хоста (SSH)
 resource "yandex_vpc_security_group" "bastion_sg" {
@@ -58,6 +47,21 @@ resource "yandex_vpc_security_group" "bastion_sg" {
   }
 }
 
+resource "yandex_vpc_security_group_rule" "bastion_allow_icmp_from_k8s" {
+  direction              = "ingress"
+  protocol               = "ICMP"
+  description            = "Allow ICMP from k8s subnet"
+  v4_cidr_blocks         = ["10.20.0.0/24"]
+  security_group_binding = yandex_vpc_security_group.bastion_sg.id
+}
+
+
+
+locals {
+  ssh_key_file = "~/.ssh/id_ed25519.pub"
+  ssh_key      = fileexists(pathexpand(local.ssh_key_file)) ? file(pathexpand(local.ssh_key_file)) : ""
+}
+
 resource "yandex_compute_instance" "bastion" {
   count       = var.create_bastion ? 1 : 0
   name        = "bastion-host"
@@ -72,18 +76,18 @@ resource "yandex_compute_instance" "bastion" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd842fimj1jg6vmfee6r"  # Ubuntu 22.04 LTS
+      image_id = "fd842fimj1jg6vmfee6r" # Ubuntu 22.04 LTS
     }
   }
 
   network_interface {
-    subnet_id      = yandex_vpc_subnet.subnets["subnet-a"].id
-    nat            = true
+    subnet_id          = yandex_vpc_subnet.subnets["subnet-a"].id
+    nat                = true
     security_group_ids = [yandex_vpc_security_group.bastion_sg.id]
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
+    ssh-keys = "ubuntu:${local.ssh_key}"
   }
 }
 
@@ -91,7 +95,7 @@ module "k8s_hosts" {
   source     = "./modules/k8s-hosts"
   subnet_id  = yandex_vpc_subnet.subnets["subnet-b"].id
   network_id = yandex_vpc_network.default.id
-  ssh_key = file("~/.ssh/id_ed25519.pub")
+  ssh_key    = local.ssh_key
 
 
   vm_nodes = {

@@ -1,7 +1,7 @@
 {
   "version": 4,
   "terraform_version": "1.12.2",
-  "serial": 124,
+  "serial": 79,
   "lineage": "feaa616c-8c1e-ac75-e729-9ef395b19ae9",
   "outputs": {},
   "resources": [
@@ -20,8 +20,8 @@
             "boot_disk": [
               {
                 "auto_delete": true,
-                "device_name": "fhmpdvqc0frbfto1igj0",
-                "disk_id": "fhmpdvqc0frbfto1igj0",
+                "device_name": "fhmgsjb3v7jln6r4k6nv",
+                "disk_id": "fhmgsjb3v7jln6r4k6nv",
                 "initialize_params": [
                   {
                     "block_size": 4096,
@@ -37,11 +37,11 @@
                 "mode": "READ_WRITE"
               }
             ],
-            "created_at": "2025-08-03T12:00:45Z",
+            "created_at": "2025-08-02T21:55:25Z",
             "description": "",
             "filesystem": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "fqdn": "fhm6gufs433l4dpipfjr.auto.internal",
+            "fqdn": "fhmjdk4ngivspkucmslp.auto.internal",
             "gpu_cluster_id": "",
             "hardware_generation": [
               {
@@ -54,8 +54,8 @@
               }
             ],
             "hostname": "",
-            "id": "fhm6gufs433l4dpipfjr",
-            "labels": null,
+            "id": "fhmjdk4ngivspkucmslp",
+            "labels": {},
             "local_disk": [],
             "maintenance_grace_period": "",
             "maintenance_policy": null,
@@ -76,20 +76,20 @@
               {
                 "dns_record": [],
                 "index": 0,
-                "ip_address": "10.10.0.3",
+                "ip_address": "10.10.0.20",
                 "ipv4": true,
                 "ipv6": false,
                 "ipv6_address": "",
                 "ipv6_dns_record": [],
-                "mac_address": "d0:0d:68:79:fc:20",
+                "mac_address": "d0:0d:13:6d:09:78",
                 "nat": true,
                 "nat_dns_record": [],
-                "nat_ip_address": "158.160.36.178",
+                "nat_ip_address": "89.169.134.17",
                 "nat_ip_version": "IPV4",
                 "security_group_ids": [
-                  "enpb9lhkj0pggudj9ulv"
+                  "enpakkkfvg87jsjh3e6v"
                 ],
-                "subnet_id": "e9be7vd35c0sdehfh7m9"
+                "subnet_id": "e9b4mbmef0rsbg8gu122"
               }
             ],
             "placement_policy": [
@@ -140,14 +140,14 @@
           "schema_version": 0,
           "attributes": {
             "data": [
-              "10.20.0.12"
+              "10.20.0.8"
             ],
-            "id": "dns86kl5h4og80hddt64/k8s-ingress/A",
+            "id": "dnsbugjdkosnarif8c53/k8s-ingress/A",
             "name": "k8s-ingress",
             "timeouts": null,
             "ttl": 300,
             "type": "A",
-            "zone_id": "dns86kl5h4og80hddt64"
+            "zone_id": "dnsbugjdkosnarif8c53"
           },
           "sensitive_attributes": [],
           "identity_schema_version": 0,
@@ -171,12 +171,12 @@
             "data": [
               "10.20.0.32"
             ],
-            "id": "dns86kl5h4og80hddt64/k8s-master/A",
+            "id": "dnsbugjdkosnarif8c53/k8s-master/A",
             "name": "k8s-master",
             "timeouts": null,
             "ttl": 300,
             "type": "A",
-            "zone_id": "dns86kl5h4og80hddt64"
+            "zone_id": "dnsbugjdkosnarif8c53"
           },
           "sensitive_attributes": [],
           "identity_schema_version": 0,
@@ -198,14 +198,14 @@
           "schema_version": 0,
           "attributes": {
             "data": [
-              "10.20.0.9"
+              "10.20.0.20"
             ],
-            "id": "dns86kl5h4og80hddt64/k8s-worker/A",
+            "id": "dnsbugjdkosnarif8c53/k8s-worker/A",
             "name": "k8s-worker",
             "timeouts": null,
             "ttl": 300,
             "type": "A",
-            "zone_id": "dns86kl5h4og80hddt64"
+            "zone_id": "dnsbugjdkosnarif8c53"
           },
           "sensitive_attributes": [],
           "identity_schema_version": 0,
@@ -226,17 +226,17 @@
         {
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:41Z",
+            "created_at": "2025-08-02T21:55:05Z",
             "deletion_protection": false,
             "description": "Private DNS zone for Kubernetes nodes",
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "dns86kl5h4og80hddt64",
+            "id": "dnsbugjdkosnarif8c53",
             "labels": {
               "environment": "dev"
             },
             "name": "example-zone",
             "private_networks": [
-              "enpet4cfbr8r0ndkl9n6"
+              "enpi06emn0915kl88vor"
             ],
             "public": false,
             "timeouts": null,
@@ -260,14 +260,17 @@
         {
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:33Z",
-            "default_security_group_id": "enpn4s3c3v0sogeb7c71",
+            "created_at": "2025-08-02T21:55:01Z",
+            "default_security_group_id": "enpv1pm7ta2tmbjao09s",
             "description": "",
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "enpet4cfbr8r0ndkl9n6",
+            "id": "enpi06emn0915kl88vor",
             "labels": {},
             "name": "vpc-net",
-            "subnet_ids": [],
+            "subnet_ids": [
+              "e2l08m7hg183ia7qk315",
+              "e9b4mbmef0rsbg8gu122"
+            ],
             "timeouts": null
           },
           "sensitive_attributes": [],
@@ -285,13 +288,13 @@
         {
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:44Z",
+            "created_at": "2025-08-02T21:55:22Z",
             "description": "",
             "egress": [
               {
                 "description": "Allow all egress",
                 "from_port": -1,
-                "id": "enp8t3mjdktvkkgtdsdk",
+                "id": "enpmnrv8lubjsba6okf4",
                 "labels": {},
                 "port": -1,
                 "predefined_target": "",
@@ -305,17 +308,17 @@
               }
             ],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "enpb9lhkj0pggudj9ulv",
+            "id": "enpakkkfvg87jsjh3e6v",
             "ingress": [
               {
                 "description": "Allow SSH",
                 "from_port": -1,
-                "id": "enp2m1n796fvn5tg0307",
+                "id": "enpl3p0fio6gs85t19fl",
                 "labels": {},
                 "port": 22,
-                "predefined_target": "",
+                "predefined_target": null,
                 "protocol": "TCP",
-                "security_group_id": "",
+                "security_group_id": null,
                 "to_port": -1,
                 "v4_cidr_blocks": [
                   "0.0.0.0/0"
@@ -325,7 +328,7 @@
             ],
             "labels": {},
             "name": "bastion-ssh-sg",
-            "network_id": "enpet4cfbr8r0ndkl9n6",
+            "network_id": "enpi06emn0915kl88vor",
             "status": "ACTIVE",
             "timeouts": null
           },
@@ -350,12 +353,12 @@
             "description": "Allow ICMP from k8s subnet",
             "direction": "ingress",
             "from_port": -1,
-            "id": "enp0vj57ut6u86nsbkjm",
+            "id": "enp4iq21lheg82u79lgc",
             "labels": null,
             "port": -1,
             "predefined_target": "",
             "protocol": "ICMP",
-            "security_group_binding": "enpb9lhkj0pggudj9ulv",
+            "security_group_binding": "enpakkkfvg87jsjh3e6v",
             "security_group_id": "",
             "timeouts": null,
             "to_port": -1,
@@ -383,14 +386,14 @@
           "index_key": "subnet-a",
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:41Z",
+            "created_at": "2025-08-02T21:55:04Z",
             "description": "",
             "dhcp_options": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "e9be7vd35c0sdehfh7m9",
+            "id": "e9b4mbmef0rsbg8gu122",
             "labels": {},
             "name": "subnet-a",
-            "network_id": "enpet4cfbr8r0ndkl9n6",
+            "network_id": "enpi06emn0915kl88vor",
             "route_table_id": "",
             "timeouts": null,
             "v4_cidr_blocks": [
@@ -410,14 +413,14 @@
           "index_key": "subnet-b",
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:40Z",
+            "created_at": "2025-08-02T21:55:04Z",
             "description": "",
             "dhcp_options": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "e2l1n0abp3vtgl4ggrnd",
+            "id": "e2l08m7hg183ia7qk315",
             "labels": {},
             "name": "subnet-b",
-            "network_id": "enpet4cfbr8r0ndkl9n6",
+            "network_id": "enpi06emn0915kl88vor",
             "route_table_id": "",
             "timeouts": null,
             "v4_cidr_blocks": [
@@ -451,8 +454,8 @@
             "boot_disk": [
               {
                 "auto_delete": true,
-                "device_name": "epdm6f4g5akek3it0473",
-                "disk_id": "epdm6f4g5akek3it0473",
+                "device_name": "epdli4dcfp0ftefg9f1k",
+                "disk_id": "epdli4dcfp0ftefg9f1k",
                 "initialize_params": [
                   {
                     "block_size": 4096,
@@ -468,7 +471,7 @@
                 "mode": "READ_WRITE"
               }
             ],
-            "created_at": "2025-08-03T12:00:43Z",
+            "created_at": "2025-08-02T21:55:08Z",
             "description": "",
             "filesystem": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
@@ -485,8 +488,8 @@
               }
             ],
             "hostname": "k8s-ingress.example.com",
-            "id": "epdv696qc9cgnrusv071",
-            "labels": null,
+            "id": "epdv1bs79rj6ie9oleoc",
+            "labels": {},
             "local_disk": [],
             "maintenance_grace_period": "",
             "maintenance_policy": null,
@@ -507,20 +510,20 @@
               {
                 "dns_record": [],
                 "index": 0,
-                "ip_address": "10.20.0.30",
+                "ip_address": "10.20.0.12",
                 "ipv4": true,
                 "ipv6": false,
                 "ipv6_address": "",
                 "ipv6_dns_record": [],
-                "mac_address": "d0:0d:1f:32:4d:a6",
+                "mac_address": "d0:0d:1f:0a:f8:74",
                 "nat": false,
                 "nat_dns_record": [],
                 "nat_ip_address": "",
                 "nat_ip_version": "",
                 "security_group_ids": [
-                  "enp0f3vneundhgojceqo"
+                  "enp2h61r3jh5f4v5s7r7"
                 ],
-                "subnet_id": "e2l1n0abp3vtgl4ggrnd"
+                "subnet_id": "e2l08m7hg183ia7qk315"
               }
             ],
             "placement_policy": [
@@ -568,8 +571,8 @@
             "boot_disk": [
               {
                 "auto_delete": true,
-                "device_name": "epd8tbq3pn84ufmprarj",
-                "disk_id": "epd8tbq3pn84ufmprarj",
+                "device_name": "epd2q4sddm21ir0auvub",
+                "disk_id": "epd2q4sddm21ir0auvub",
                 "initialize_params": [
                   {
                     "block_size": 4096,
@@ -585,7 +588,7 @@
                 "mode": "READ_WRITE"
               }
             ],
-            "created_at": "2025-08-03T12:00:43Z",
+            "created_at": "2025-08-02T21:55:08Z",
             "description": "",
             "filesystem": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
@@ -602,8 +605,8 @@
               }
             ],
             "hostname": "k8s-master.example.com",
-            "id": "epdkvo90o0e2l7kh209v",
-            "labels": null,
+            "id": "epdkbe66cr5i3fn8luq8",
+            "labels": {},
             "local_disk": [],
             "maintenance_grace_period": "",
             "maintenance_policy": null,
@@ -624,20 +627,20 @@
               {
                 "dns_record": [],
                 "index": 0,
-                "ip_address": "10.20.0.14",
+                "ip_address": "10.20.0.32",
                 "ipv4": true,
                 "ipv6": false,
                 "ipv6_address": "",
                 "ipv6_dns_record": [],
-                "mac_address": "d0:0d:14:fe:12:0c",
+                "mac_address": "d0:0d:14:5b:8c:66",
                 "nat": false,
                 "nat_dns_record": [],
                 "nat_ip_address": "",
                 "nat_ip_version": "",
                 "security_group_ids": [
-                  "enp0f3vneundhgojceqo"
+                  "enp2h61r3jh5f4v5s7r7"
                 ],
-                "subnet_id": "e2l1n0abp3vtgl4ggrnd"
+                "subnet_id": "e2l08m7hg183ia7qk315"
               }
             ],
             "placement_policy": [
@@ -685,8 +688,8 @@
             "boot_disk": [
               {
                 "auto_delete": true,
-                "device_name": "epdrdk19nrqbldmj7tmn",
-                "disk_id": "epdrdk19nrqbldmj7tmn",
+                "device_name": "epdt44lmu28ed89v5nm4",
+                "disk_id": "epdt44lmu28ed89v5nm4",
                 "initialize_params": [
                   {
                     "block_size": 4096,
@@ -702,7 +705,7 @@
                 "mode": "READ_WRITE"
               }
             ],
-            "created_at": "2025-08-03T12:00:43Z",
+            "created_at": "2025-08-02T21:55:08Z",
             "description": "",
             "filesystem": [],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
@@ -719,8 +722,8 @@
               }
             ],
             "hostname": "k8s-worker.example.com",
-            "id": "epdkc34t38svr1c09km5",
-            "labels": null,
+            "id": "epdfgqpq7dfpbu2g184u",
+            "labels": {},
             "local_disk": [],
             "maintenance_grace_period": "",
             "maintenance_policy": null,
@@ -741,20 +744,20 @@
               {
                 "dns_record": [],
                 "index": 0,
-                "ip_address": "10.20.0.7",
+                "ip_address": "10.20.0.9",
                 "ipv4": true,
                 "ipv6": false,
                 "ipv6_address": "",
                 "ipv6_dns_record": [],
-                "mac_address": "d0:0d:14:60:c9:d1",
+                "mac_address": "d0:0d:f8:6b:3a:3b",
                 "nat": false,
                 "nat_dns_record": [],
                 "nat_ip_address": "",
                 "nat_ip_version": "",
                 "security_group_ids": [
-                  "enp0f3vneundhgojceqo"
+                  "enp2h61r3jh5f4v5s7r7"
                 ],
-                "subnet_id": "e2l1n0abp3vtgl4ggrnd"
+                "subnet_id": "e2l08m7hg183ia7qk315"
               }
             ],
             "placement_policy": [
@@ -805,21 +808,66 @@
         {
           "schema_version": 0,
           "attributes": {
-            "created_at": "2025-08-03T12:00:42Z",
+            "created_at": "2025-08-02T21:55:06Z",
             "description": "",
-            "egress": [],
+            "egress": [
+              {
+                "description": "Allow all egress",
+                "from_port": -1,
+                "id": "enpcpo0oqio0u0gtlpl3",
+                "labels": {},
+                "port": -1,
+                "predefined_target": "",
+                "protocol": "ANY",
+                "security_group_id": "",
+                "to_port": -1,
+                "v4_cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "v6_cidr_blocks": []
+              }
+            ],
             "folder_id": "b1gq0b7bj6tgvtti6km6",
-            "id": "enp0f3vneundhgojceqo",
-            "ingress": [],
+            "id": "enp2h61r3jh5f4v5s7r7",
+            "ingress": [
+              {
+                "description": "Allow SSH from bastion",
+                "from_port": -1,
+                "id": "enpvnrduibb3r67k5tn2",
+                "labels": {},
+                "port": 22,
+                "predefined_target": "",
+                "protocol": "TCP",
+                "security_group_id": "",
+                "to_port": -1,
+                "v4_cidr_blocks": [
+                  "10.10.0.0/24"
+                ],
+                "v6_cidr_blocks": []
+              },
+              {
+                "description": "Allow all traffic from this SG",
+                "from_port": -1,
+                "id": "enpfsc1gfhd6vec4j5aj",
+                "labels": {},
+                "port": -1,
+                "predefined_target": "",
+                "protocol": "ANY",
+                "security_group_id": "enp2h61r3jh5f4v5s7r7",
+                "to_port": -1,
+                "v4_cidr_blocks": [],
+                "v6_cidr_blocks": []
+              }
+            ],
             "labels": {},
             "name": "k8s-sg",
-            "network_id": "enpet4cfbr8r0ndkl9n6",
+            "network_id": "enpi06emn0915kl88vor",
             "status": "ACTIVE",
             "timeouts": null
           },
           "sensitive_attributes": [],
           "identity_schema_version": 0,
-          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH19",
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMCJ9",
           "dependencies": [
             "yandex_vpc_network.default"
           ]
@@ -839,12 +887,12 @@
             "description": "Allow all egress",
             "direction": "egress",
             "from_port": -1,
-            "id": "enpoeaee1h48nkeukhig",
+            "id": "enposnl85q9b8cp9uv8d",
             "labels": null,
             "port": -1,
             "predefined_target": "",
             "protocol": "ANY",
-            "security_group_binding": "enp0f3vneundhgojceqo",
+            "security_group_binding": "enp2h61r3jh5f4v5s7r7",
             "security_group_id": "",
             "timeouts": null,
             "to_port": -1,
@@ -875,13 +923,13 @@
             "description": "Allow all traffic from this SG",
             "direction": "ingress",
             "from_port": -1,
-            "id": "enp7cpnveoc92jogkrgf",
+            "id": "enpfsc1gfhd6vec4j5aj",
             "labels": null,
             "port": -1,
             "predefined_target": "",
             "protocol": "ANY",
-            "security_group_binding": "enp0f3vneundhgojceqo",
-            "security_group_id": "enp0f3vneundhgojceqo",
+            "security_group_binding": "enp2h61r3jh5f4v5s7r7",
+            "security_group_id": "enp2h61r3jh5f4v5s7r7",
             "timeouts": null,
             "to_port": -1,
             "v4_cidr_blocks": null,
