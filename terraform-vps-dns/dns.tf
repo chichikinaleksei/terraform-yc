@@ -13,24 +13,24 @@ resource "yandex_dns_zone" "private_zone" {
 
 resource "yandex_dns_recordset" "master" {
   zone_id = yandex_dns_zone.private_zone.id
-  name    = "k8s-master"
+  name    = "k8s-master.${var.domain_suffix}."
   type    = "A"
   ttl     = 300
-  data    = ["10.20.0.32"]  # ✅ master
+  data    = [module.k8s_hosts.master_ip]
 }
 
 resource "yandex_dns_recordset" "worker" {
   zone_id = yandex_dns_zone.private_zone.id
-  name    = "k8s-worker"
+  name    = "k8s-worker.${var.domain_suffix}."
   type    = "A"
   ttl     = 300
-  data    = ["10.20.0.9"]   # ✅ worker
+  data    = [module.k8s_hosts.worker_ip]
 }
 
 resource "yandex_dns_recordset" "ingress" {
   zone_id = yandex_dns_zone.private_zone.id
-  name    = "k8s-ingress"
+  name    = "k8s-ingress.${var.domain_suffix}."
   type    = "A"
   ttl     = 300
-  data    = ["10.20.0.12"]  # ✅ ingress
+  data    = [module.k8s_hosts.ingress_ip]
 }

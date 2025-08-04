@@ -39,3 +39,9 @@ variable "create_bastion" {
   type        = bool
   default     = true
 }
+
+variable "domain_suffix" {
+  description = "Domain suffix for DNS records"
+  type        = string
+  default     = "example.com"
+}

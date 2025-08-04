@@ -30,6 +30,7 @@ resource "yandex_vpc_subnet" "subnets" {
 
 # Security Group для bastion-хоста (SSH)
 resource "yandex_vpc_security_group" "bastion_sg" {
+  count = var.create_bastion ? 1 : 0
   name       = "bastion-ssh-sg"
   network_id = yandex_vpc_network.default.id
 
@@ -48,11 +49,12 @@ resource "yandex_vpc_security_group" "bastion_sg" {
 }
 
 resource "yandex_vpc_security_group_rule" "bastion_allow_icmp_from_k8s" {
+  count = var.create_bastion ? 1 : 0
   direction              = "ingress"
   protocol               = "ICMP"
   description            = "Allow ICMP from k8s subnet"
   v4_cidr_blocks         = ["10.20.0.0/24"]
-  security_group_binding = yandex_vpc_security_group.bastion_sg.id
+  security_group_binding = yandex_vpc_security_group.bastion_sg[0].id
 }
 
 
@@ -83,7 +85,7 @@ resource "yandex_compute_instance" "bastion" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.subnets["subnet-a"].id
     nat                = true
-    security_group_ids = [yandex_vpc_security_group.bastion_sg.id]
+    security_group_ids = [yandex_vpc_security_group.bastion_sg[0].id]
   }
 
   metadata = {
@@ -115,5 +117,13 @@ module "k8s_hosts" {
       zone = "ru-central1-b"
     }
   }
+}
+
+output "bastion_id" {
+  value = var.create_bastion ? yandex_compute_instance.bastion[0].id : null
+}
+
+resource "yandex_storage_bucket" "tfstate" {
+  bucket = "your-unique-bucket-name" # Use a globally unique name!
 }
 
