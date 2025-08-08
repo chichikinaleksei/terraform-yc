@@ -1,6 +1,6 @@
 resource "yandex_dns_zone" "private_zone" {
-  name             = "example-zone"
-  zone             = "example.com."
+  name             = "example-zone-alt"
+  zone             = "alt.example.com."
   description      = "Private DNS zone for Kubernetes nodes"
   folder_id        = var.folder_id
   public           = false

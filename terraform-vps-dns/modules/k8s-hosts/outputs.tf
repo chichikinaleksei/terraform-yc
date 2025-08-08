@@ -6,6 +6,11 @@ output "internal_ips" {
   }
 }
 
+
+output "k8s_sg_id" {
+  value = yandex_vpc_security_group.k8s_sg.id
+}
+
 output "hostnames" {
   description = "FQDNs of Kubernetes hosts"
   value = {

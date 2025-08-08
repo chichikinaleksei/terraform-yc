@@ -1,0 +1,17 @@
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_common_args: "-o ProxyJump=ubuntu@84.201.134.83"
+  children:
+    k8s_master:
+      hosts:
+        k8s-master:
+          ansible_host: 10.20.0.5
+    k8s_worker:
+      hosts:
+        k8s-worker:
+          ansible_host: 10.20.0.33
+    k8s_ingress:
+      hosts:
+        k8s-ingress:
+          ansible_host: 10.20.0.24

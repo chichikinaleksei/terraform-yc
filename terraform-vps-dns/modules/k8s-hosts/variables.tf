@@ -21,3 +21,13 @@ variable "ssh_key" {
   description = "SSH public key for access"
   type        = string
 }
+
+variable "security_group_ids" {
+  description = "List of security group IDs to attach to each VM"
+  type        = list(string)
+}
+
+variable "bastion_internal_ip" {
+  type        = string
+  description = "Internal IP of the bastion host"
+}

@@ -29,7 +29,7 @@ resource "yandex_compute_instance" "k8s_nodes" {
   network_interface {
     subnet_id          = var.subnet_id
     nat                = false
-    security_group_ids = [yandex_vpc_security_group.k8s_sg.id]
+    security_group_ids = var.security_group_ids
   }
 
   metadata = {
@@ -56,4 +56,13 @@ resource "yandex_vpc_security_group_rule" "k8s_egress" {
   protocol               = "ANY"
   description            = "Allow all egress"
   v4_cidr_blocks         = ["0.0.0.0/0"]
+}
+
+resource "yandex_vpc_security_group_rule" "allow_ssh_from_bastion" {
+  security_group_binding = yandex_vpc_security_group.k8s_sg.id
+  direction              = "ingress"
+  protocol               = "TCP"
+  description            = "Allow SSH from bastion"
+  port                   = 22
+  v4_cidr_blocks = ["${var.bastion_internal_ip}/32"]
 }

@@ -20,7 +20,7 @@ variable "subnets" {
 
 variable "dns_zone_name" {
   type    = string
-  default = "example.com."
+  default = "alt.example.com."
 }
 
 variable "bastion_instance_count" {
@@ -43,5 +43,5 @@ variable "create_bastion" {
 variable "domain_suffix" {
   description = "Domain suffix for DNS records"
   type        = string
-  default     = "example.com"
+  default     = "alt.example.com"
 }

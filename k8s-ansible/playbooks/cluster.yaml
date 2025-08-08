@@ -1,0 +1,26 @@
+---
+- name: Prepare all nodes
+  hosts: all
+  become: true
+  roles:
+    - { role: prepare-nodes, tags: ["prepare"] }
+
+- name: Initialize Kubernetes master node
+  hosts: k8s_master
+  become: true
+  roles:
+    - {
+        role: setup-kubeadm,
+        tags: ["init"],
+        when: "'k8s-master' in inventory_hostname",
+      }
+
+- name: Join worker and ingress nodes to cluster
+  hosts: k8s_worker:k8s_ingress
+  become: true
+  roles:
+    - {
+        role: setup-kubeadm,
+        tags: ["join"],
+        when: "'k8s-master' not in inventory_hostname",
+      }

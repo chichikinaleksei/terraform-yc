@@ -1,0 +1,159 @@
+---
+# ----------- PRE-CLEAN APT SOURCES (must run before any apt update) -----------
+- name: Remove old Docker repository files in sources.list.d
+  find:
+    paths: /etc/apt/sources.list.d
+    patterns: "*.list"
+    contains: "download.docker.com"
+  register: docker_repo_files
+
+- name: Delete old Docker repository files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ docker_repo_files.files }}"
+  when: docker_repo_files.matched | default(0) | int > 0
+
+- name: Remove Docker repo lines from /etc/apt/sources.list if present
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '^deb .*download\.docker\.com'
+    state: absent
+
+# Clean any ancient Kubernetes repo definitions
+- name: Remove old Kubernetes repo files in sources.list.d
+  find:
+    paths: /etc/apt/sources.list.d
+    patterns: "*.list"
+    contains: "apt.kubernetes.io"
+  register: k8s_repo_files
+
+- name: Delete old Kubernetes repository files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ k8s_repo_files.files }}"
+  when: k8s_repo_files.matched | default(0) | int > 0
+
+- name: Remove Kubernetes repo lines from /etc/apt/sources.list if present
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: '^deb .*apt\.kubernetes\.io'
+    state: absent
+
+- name: Force APT to use IPv4 (avoid IPv6 stalls)
+  copy:
+    dest: /etc/apt/apt.conf.d/99force-ipv4
+    content: |
+      Acquire::ForceIPv4 "true";
+
+# ----------------------
+# Base dependencies
+# ----------------------
+- name: Install base dependencies
+  apt:
+    name:
+      - curl
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - software-properties-common
+    state: present
+    update_cache: true
+
+# ----------------------
+# System prep
+# ----------------------
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Comment swap in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*\bswap\b.*)$'
+    replace: '# \1'
+
+- name: Set sysctl params for Kubernetes
+  copy:
+    dest: /etc/sysctl.d/k8s.conf
+    content: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+      net.ipv4.ip_forward = 1
+
+- name: Apply sysctl params
+  command: sysctl --system
+
+- name: Ensure keyrings directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+# ----------------------
+# Docker repo/key
+# ----------------------
+- name: Fetch and install Docker GPG key
+  shell: |
+    set -eux
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      | sudo gpg --batch --yes --dearmor --output /etc/apt/keyrings/docker.gpg
+    sudo chmod 0644 /etc/apt/keyrings/docker.gpg
+
+- name: Add Docker repository
+  copy:
+    dest: /etc/apt/sources.list.d/docker.list
+    content: |
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    mode: "0644"
+
+# ----------------------
+# Kubernetes repo/key
+# ----------------------
+- name: Fetch and install Kubernetes GPG key
+  shell: |
+    set -eux
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key \
+      | sudo gpg --batch --yes --dearmor --output /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    sudo chmod 0644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: Add Kubernetes repository
+  copy:
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /
+    mode: "0644"
+
+# ----------------------
+# Final apt update & installs
+# ----------------------
+- name: apt-get update after repos configured
+  apt:
+    update_cache: true
+
+- name: Install Docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Install kubeadm, kubelet, kubectl
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+
+- name: Hold Kubernetes packages
+  command: apt-mark hold kubelet kubeadm kubectl

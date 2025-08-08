@@ -25,6 +25,9 @@ resource "yandex_vpc_subnet" "subnets" {
   zone           = each.value.zone
   network_id     = yandex_vpc_network.default.id
   v4_cidr_blocks = [each.value.cidr_block]
+
+  route_table_id = each.key == "subnet-b" ? yandex_vpc_route_table.k8s_private_rt.id : null
+
 }
 
 
@@ -48,21 +51,49 @@ resource "yandex_vpc_security_group" "bastion_sg" {
   }
 }
 
+# resource "yandex_vpc_security_group_rule" "bastion_allow_icmp_from_k8s" {
+#   count = var.create_bastion ? 1 : 0
+#   direction              = "ingress"
+#   protocol               = "ICMP"
+#   description            = "Allow ICMP from k8s subnet"
+#   v4_cidr_blocks         = ["10.20.0.0/24"]
+#   security_group_binding = yandex_vpc_security_group.bastion_sg[0].id
+# }
+
 resource "yandex_vpc_security_group_rule" "bastion_allow_icmp_from_k8s" {
-  count = var.create_bastion ? 1 : 0
-  direction              = "ingress"
-  protocol               = "ICMP"
-  description            = "Allow ICMP from k8s subnet"
-  v4_cidr_blocks         = ["10.20.0.0/24"]
+  count              = var.create_bastion ? 1 : 0
+  description        = "Allow ICMP from k8s subnet"
+  direction          = "ingress"
+  protocol           = "ICMP"
+  v4_cidr_blocks     = ["10.20.0.0/24"]
   security_group_binding = yandex_vpc_security_group.bastion_sg[0].id
+
+
+  lifecycle {
+    ignore_changes = [security_group_id]
+  }
 }
-
-
 
 locals {
-  ssh_key_file = "~/.ssh/id_ed25519.pub"
-  ssh_key      = fileexists(pathexpand(local.ssh_key_file)) ? file(pathexpand(local.ssh_key_file)) : ""
+  ssh_key_file = "/Users/chichikinaleksei/.ssh/id_ed25519.pub"
+  ssh_key      = file(local.ssh_key_file)
 }
+
+
+# locals {
+#   ssh_key_file = "/Users/chichikinaleksei/.ssh/id_ed25519.pub"
+#   ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINeXrvVSlJlp90oFVWAjh1rG56qZRuN1nb/ThmfMKfS8 chichikinaleksei@chichikin"
+# }
+
+resource "yandex_vpc_address" "bastion_static_ip" {
+  count = var.create_bastion ? 1 : 0
+  name  = "bastion-ip"
+
+  external_ipv4_address {
+    zone_id = "ru-central1-a"
+  }
+}
+
 
 resource "yandex_compute_instance" "bastion" {
   count       = var.create_bastion ? 1 : 0
@@ -82,11 +113,13 @@ resource "yandex_compute_instance" "bastion" {
     }
   }
 
-  network_interface {
+   network_interface {
     subnet_id          = yandex_vpc_subnet.subnets["subnet-a"].id
     nat                = true
+    nat_ip_address     = yandex_vpc_address.bastion_static_ip[0].external_ipv4_address[0].address
     security_group_ids = [yandex_vpc_security_group.bastion_sg[0].id]
   }
+
 
   metadata = {
     ssh-keys = "ubuntu:${local.ssh_key}"
@@ -97,7 +130,9 @@ module "k8s_hosts" {
   source     = "./modules/k8s-hosts"
   subnet_id  = yandex_vpc_subnet.subnets["subnet-b"].id
   network_id = yandex_vpc_network.default.id
+  security_group_ids = [module.k8s_hosts.k8s_sg_id]
   ssh_key    = local.ssh_key
+  bastion_internal_ip = yandex_compute_instance.bastion[0].network_interface.0.ip_address
 
 
   vm_nodes = {
@@ -127,3 +162,18 @@ resource "yandex_storage_bucket" "tfstate" {
   bucket = "your-unique-bucket-name" # Use a globally unique name!
 }
 
+# NAT gateway for private subnets
+resource "yandex_vpc_gateway" "nat" {
+  name = "nat-gw"
+}
+
+# Route table that sends 0.0.0.0/0 to the NAT gateway
+resource "yandex_vpc_route_table" "k8s_private_rt" {
+  name       = "k8s-private-rt"
+  network_id = yandex_vpc_network.default.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.nat.id
+  }
+}

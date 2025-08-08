@@ -1,0 +1,24 @@
+rules:
+  - direction: EGRESS
+    protocol: ANY
+    ports: []
+    cidr_blocks:
+      v4_cidr_blocks:
+        - 0.0.0.0/0
+    description: Allow all egress
+
+  - direction: INGRESS
+    protocol: ANY
+    ports: []
+    security_group_id: enp1j14i2bspn9a2l2gk
+    description: Allow all from self
+
+  - direction: INGRESS
+    protocol: TCP
+    ports:
+      - 22
+    cidr_blocks:
+      v4_cidr_blocks:
+        - 10.10.0.29/32
+    description: Allow SSH from bastion host
+

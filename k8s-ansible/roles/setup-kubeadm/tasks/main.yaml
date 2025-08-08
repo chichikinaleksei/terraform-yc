@@ -1,0 +1,46 @@
+---
+- name: Create kubeadm config file from template
+  template:
+    src: kubeadm-config.yaml.j2
+    dest: /tmp/kubeadm-config.yaml
+  when: inventory_hostname == groups['k8s_master'][0]
+
+- name: Initialize the Kubernetes cluster (master)
+  command: kubeadm init --config=/tmp/kubeadm-config.yaml
+  when: inventory_hostname == groups['k8s_master'][0]
+  register: kubeadm_init_output
+  changed_when: true
+
+- name: Set up kubeconfig for ubuntu user (master only)
+  become: true
+  become_user: ubuntu
+  command: >
+    cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+  when: inventory_hostname == groups['k8s_master'][0]
+
+- name: Extract join command
+  shell: |
+    kubeadm token create --print-join-command
+  when: inventory_hostname == groups['k8s_master'][0]
+  register: join_command
+
+- name: Save join command to file on Ansible host
+  local_action: copy content="{{ join_command.stdout }}" dest=join-command.sh
+  when: inventory_hostname == groups['k8s_master'][0]
+  run_once: true
+
+- name: Copy join command to workers
+  copy:
+    src: join-command.sh
+    dest: /tmp/join-command.sh
+  when: inventory_hostname in groups['k8s_worker'] + groups['k8s_ingress']
+
+- name: Join node to the Kubernetes cluster
+  command: bash /tmp/join-command.sh
+  when: inventory_hostname in groups['k8s_worker'] + groups['k8s_ingress']
+
+- name: Label ingress node
+  command: >
+    kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/ingress=""
+  when: inventory_hostname in groups['k8s_ingress']
+  delegate_to: localhost
