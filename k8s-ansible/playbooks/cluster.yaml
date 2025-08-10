@@ -3,24 +3,41 @@
   hosts: all
   become: true
   roles:
-    - { role: prepare-nodes, tags: ["prepare"] }
+    - role: prepare-nodes
+      tags: [prepare]
 
-- name: Initialize Kubernetes master node
+- name: Initialize Kubernetes control plane (master)
   hosts: k8s_master
   become: true
   roles:
-    - {
-        role: setup-kubeadm,
-        tags: ["init"],
-        when: "'k8s-master' in inventory_hostname",
-      }
+    - role: setup-kubeadm
+      tags: [init]
 
 - name: Join worker and ingress nodes to cluster
   hosts: k8s_worker:k8s_ingress
   become: true
   roles:
-    - {
-        role: setup-kubeadm,
-        tags: ["join"],
-        when: "'k8s-master' not in inventory_hostname",
-      }
+    - role: setup-kubeadm
+      tags: [join]
+
+- name: Wait and label ingress nodes
+  hosts: k8s_master
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait until ingress nodes are registered
+      command: >
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf get node {{ item }}
+      register: node_check
+      until: node_check.rc == 0
+      retries: 30
+      delay: 10
+      loop: "{{ groups['k8s_ingress'] | default([]) }}"
+      when: (groups['k8s_ingress'] | default([])) | length > 0
+
+    - name: Label ingress node(s)
+      command: >
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf
+        label node {{ item }} node-role.kubernetes.io/ingress="" --overwrite
+      loop: "{{ groups['k8s_ingress'] | default([]) }}"
+      when: (groups['k8s_ingress'] | default([])) | length > 0

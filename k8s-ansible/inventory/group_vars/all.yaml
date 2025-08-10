@@ -1,5 +1,5 @@
-kube_version: "1.30.0"
+kube_version: "1.30.14"
 pod_subnet: "10.244.0.0/16"
 service_subnet: "10.96.0.0/12"
-master_ip: "10.20.0.30"
+master_ip: "10.20.0.33"
 api_server_endpoint: "k8s-master:6443"
